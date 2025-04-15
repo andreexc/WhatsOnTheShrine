@@ -1,0 +1,42 @@
+{
+    "status": "success",
+    "error": null,
+    "data": {
+        "start": "2025-04-15T15:00:00",
+        "end": "2025-04-22T14:59:59",
+        "week": 508,
+        "perks": [{
+            "id": 267,
+            "bloodpoints": 100000,
+            "shards": 2000,
+            "name": "Dominance",
+            "image": "perks/Eclair/dominance.png",
+            "character": "The Dark Lord",
+            "usage_tier": "low"
+        }, {
+            "id": 227,
+            "bloodpoints": 100000,
+            "shards": 2000,
+            "name": "THWACK!",
+            "image": "perks/Saturn/thwack.png",
+            "character": "The Skull Merchant",
+            "usage_tier": "low"
+        }, {
+            "id": 93,
+            "bloodpoints": 100000,
+            "shards": 2000,
+            "name": "Detective's Hunch",
+            "image": "perks/Finland/detectivesHunch.png",
+            "character": "Detective Tapp",
+            "usage_tier": "low"
+        }, {
+            "id": 37,
+            "bloodpoints": 100000,
+            "shards": 2000,
+            "name": "Iron Will",
+            "image": "perks/ironWill.png",
+            "character": "Jake Park",
+            "usage_tier": "veryhigh"
+        }]
+    }
+}
