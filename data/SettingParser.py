@@ -10,9 +10,12 @@ class SettingParser():
         return
     
     def parseSettings(self):
-        f = open(self.__path, "r", encoding=self.__encoding)
-        self.__settings = js.loads(f.read())
-        f.close()
+        try:
+            f = open(self.__path, "r", encoding=self.__encoding)
+            self.__settings = js.loads(f.read())
+            f.close()
+        except(IOError):
+            print("Error while opening the settings.")
         return
     
     def getSettings(self, key):
