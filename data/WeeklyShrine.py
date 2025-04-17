@@ -26,15 +26,16 @@ class WeeklyShrine:
 
     def __handleCacheError(self):
         self.__createCache()
+        self.__sendRequest()
         return
     
     def __handleMissingPermissionError(self):
         print("Missing permission to read my own cache.")
+        self.__sendRequest()
         return
 
     def __deserializeDate(self, date : str):
-        date = date.replace('T', '-')
-        date = date.replace(':', '-')
+        date = date.replace('T', '-').replace(':', '-')
         date_list = date.split('-')
         return datetime.datetime(year=int(date_list[0]), month=int(date_list[1]), day=int(date_list[2]),
                                  hour=int(date_list[3]), minute=int(date_list[4]), second=int(date_list[5]))
@@ -66,20 +67,18 @@ class WeeklyShrine:
             if (content == ''):
                 return False
             else:
-                if self.__checkRequestSuccess() and not self.__isExpired():
+                if not self.__isExpired():
                     return True
                 else:
                     return False
         except(FileNotFoundError, OSError, IOError):
             self.__handleCacheError()
-            self.__sendRequest()
         except(PermissionError):
             self.__handleMissingPermissionError()
-            self.__sendRequest()
         return
 
     def __readFromCache(self):
-        print("Reading from cache")
+        #print("Reading from cache")
         try:
             f = open(self.__cachePath, "r", encoding=self.__enc)
             self.__ShrineJSON = json.loads(f.read())
@@ -92,8 +91,9 @@ class WeeklyShrine:
         return
 
     def __sendRequest(self):
-        print("Making the get request")
+        #print("Making the get request")
         res = requests.get(self.__URL)
+
         self.__RequestStatusCode = res.status_code
         self.__ShrineJSON = res.json()
         self.__ShrineJSON["status"] = res.status_code
@@ -106,13 +106,24 @@ class WeeklyShrine:
             pass
             # don't save on the cache, let be the next request
             # to handle the cache
+        except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout):
+            print("Request timed out. Try again later.")
+        except (requests.exceptions.ConnectionError):
+            print("Connection Error. Try again later.") 
+        except (requests.exceptions.RequestException): # every remaining case
+            print("Unknown Connection Error.")
         return
 
     def __makeRequest(self):
-        if (not self.__checkOnCache()):
-            self.__sendRequest()
-        else:
-            self.__readFromCache()
+
+        # check if it's not in memory
+        if (not self.__checkRequestSuccess()):
+            if (not self.__checkOnCache()):
+                self.__sendRequest()
+            else:
+                self.__readFromCache()
+        #else:
+            #print("Reading from memory")
         return
 
     def __sanitizeLink(self, name: str):
@@ -133,9 +144,6 @@ class WeeklyShrine:
         return str_res
 
     def __str__(self):
-        self.__makeRequest()  # FIX: makes the get request anyway even if it's in the cache
-        if self.__checkRequestSuccess():
-            print(self.__deserializeJSON())
-        else:
-            print(f"Error code {self.__RequestStatusCode}. Try again later.")
+        self.__makeRequest()
+        print(self.__deserializeJSON())
         return
